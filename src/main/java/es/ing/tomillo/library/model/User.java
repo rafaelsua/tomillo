@@ -1,26 +1,31 @@
 package es.ing.tomillo.library.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 public class User {
-
+    // TODO: Implementar los atributos según el ejercicio 2
     // - nombre (String)
     // - id (int)
-    // - librosPrestados (List de Libro)
+    // - librosPrestados (Array de Libro)
     private String name;
     private int id;
-    private final List<Book> borrowedBooks;
-    private static final int MAX_BORROWED_BOOKS = 5;
+    private Book[] borrowedBooks;
+    private int borrowedBooksCount;
 
-    // Constructor con un maximo de 5 libros prestados
+    // TODO: Implementar constructor según el ejercicio 2
+    public User(String name) {
+        this.name = name;
+        this.id = 0; // Se asignará al insertar en la base de datos
+        this.borrowedBooks = new Book[5]; // Máximo 5 libros prestados
+        this.borrowedBooksCount = 0;
+    }
+
     public User(String name, int id) {
         this.name = name;
         this.id = id;
-        this.borrowedBooks = new ArrayList<>();
+        this.borrowedBooks = new Book[5]; // Máximo 5 libros prestados
+        this.borrowedBooksCount = 0;
     }
 
+    // TODO: Implementar getters y setters según el ejercicio 2
     public String getName() {
         return name;
     }
@@ -37,54 +42,61 @@ public class User {
         this.id = id;
     }
 
-    public List<Book> getBorrowedBooks() {
+    public Book[] getBorrowedBooks() {
         return borrowedBooks;
     }
 
-    public int getBookCount() {
-        return borrowedBooks.size();
+    public void setBorrowedBooks(Book[] borrowedBooks) {
+        this.borrowedBooks = borrowedBooks;
     }
 
     // TODO: Implementar método prestarLibro según el ejercicio 2
-    // Debe añadir un libro a la lista de libros prestados
     public void borrowBook(Book book) {
-
+        if (borrowedBooksCount < borrowedBooks.length) {
+            borrowedBooks[borrowedBooksCount] = book;
+            borrowedBooksCount++;
+        }
     }
 
     // TODO: Implementar método devolverLibro según el ejercicio 2
-    // Debe eliminar un libro a lista  de libros prestados
     public void returnBook(Book book) {
-
+        for (int i = 0; i < borrowedBooksCount; i++) {
+            if (borrowedBooks[i].equals(book)) {
+                // Mover el último libro a la posición actual
+                borrowedBooks[i] = borrowedBooks[borrowedBooksCount - 1];
+                borrowedBooks[borrowedBooksCount - 1] = null;
+                borrowedBooksCount--;
+                break;
+            }
+        }
     }
 
-    // TODO: Implementar método reservarLibro según el ejercicio 2
+    // TODO: Implementar método reservarLibro según el ejercicio 6
     // Debe permitir reservar libros que no están disponibles
     public void reserveBook(Book book) {
-
+        if (!book.isAvailable()) {
+            System.out.println("El libro '" + book.getTitle() + "' ya está reservado por otro usuario");
+        } else {
+            System.out.println("No se puede reservar un libro que está disponible. Debe prestarlo directamente");
+        }
     }
 
-    // TODO: Implementar método toString para mostrar la información del usuario
+    // TODO: Implementar método mostrarInformacion según el ejercicio 2
     @Override
     public String toString() {
         return "User{" +
                 "name='" + name + '\'' +
                 ", id=" + id +
-                ", borrowedBooks=" + borrowedBooks.size() +
                 '}';
     }
 
     // TODO: Implementar método equals para comparar usuarios por ID
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        User user = (User) obj;
         return id == user.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }
 
